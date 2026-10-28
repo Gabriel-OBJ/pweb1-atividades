@@ -1,0 +1,102 @@
+<?php
+// =====================================================================
+// Projeto Integrador v1: Perfil do Estudante
+// =====================================================================
+
+// 1. Dados do perfil (R2)
+$perfil = [
+    'nome'         => 'Gabriel Soares Vieira',
+    'curso'        => 'Tecnologia em Análise e Desenvolvimento de Sistemas',
+    'campus'       => 'IFCE Campus Boa Viagem',
+    'cidade'       => 'Boa Viagem - CE',
+    'apresentacao' => 'Concluí o ensino médio integrado ao curso técnico em Redes de Computadores no IFCE e, motivado pelo dinamismo da área de tecnologia, decidi dar continuidade à minha formação acadêmica no mesmo campus, ingressando no curso superior de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS). Meu principal objetivo profissional é consolidar minha carreira como Engenheiro de Software, atuando no desenvolvimento de sistemas robustos, escaláveis e de alto impacto, compreendendo todo o ciclo de vida e a arquitetura de produtos tecnológicos para além da simples escrita de código.',
+    'habilidades'  => [
+        'Java',
+        'Spring Boot',
+        'SQL & Modelagem de Dados',
+        'Git & GitHub',
+        'Testes Unitários',
+        'Fundamentos de Computação & Algoritmos'
+    ],
+];
+
+$projetos = [
+    1 => [
+        'titulo'      => 'GymTracker API',
+        'descricao'   => 'API RESTful desenvolvida em Java 21 e Spring Boot para rastreamento e gerenciamento de sessões de treino físico. Implementa arquitetura baseada no modelo de maturidade de Richardson com suporte a HATEOAS para hipermídia navegável, persistência com Spring Data JPA/H2, documentação interativa via Swagger UI e validações de regras de negócio.',
+        'tecnologias' => 'Java 21, Spring Boot, Spring HATEOAS, Spring Data JPA, H2 Database, Maven, Swagger'
+    ],
+    2 => [
+        'titulo'      => 'Store Management Database Design',
+        'descricao'   => 'Projeto de modelagem e arquitetura de banco de dados relacional para gestão operacional de loja comercial. Abrange controle de estoque, compras, entregas, fornecedores e histórico temporal de preços. Implementa integridade transacional ACID com Stored Procedures para compras atômicas e Triggers automáticas para auditoria de preços.',
+        'tecnologias' => 'SQL, Modelagem Relacional, Triggers, Stored Procedures, ACID, MySQL'
+    ],
+    3 => [
+        'titulo'      => 'Sistema de Controle de Consumo de Água',
+        'descricao'   => 'Sistema web full-stack desenvolvido em PHP e Laravel para automação e gestão do abastecimento de água de associações comunitárias. Inclui registro mensal de leituras de hidrômetros com regras de validação, cálculo tarifário automático (taxa fixa e m³ excedentes), gestão financeira de faturas e integração com WhatsApp para envio automatizado de cobranças.',
+        'tecnologias' => 'PHP 8.3, Laravel 13, MySQL, Eloquent ORM, Blade, Bootstrap 5'
+    ],
+];
+
+// 4. Qual página mostrar (R3)
+$pagina = $_GET['pagina'] ?? 'inicio';
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($perfil['nome'], ENT_QUOTES, 'UTF-8') ?> | Perfil Profissional</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="tema-claro">
+    <header class="cabecalho">
+        <div class="container cabecalho-conteudo">
+            <div class="perfil-identificacao">
+                <h1 class="perfil-nome"><?= htmlspecialchars($perfil['nome'], ENT_QUOTES, 'UTF-8') ?></h1>
+                <p class="perfil-subtitulo">
+                    <?= htmlspecialchars($perfil['curso'], ENT_QUOTES, 'UTF-8') ?> &bull; 
+                    <?= htmlspecialchars($perfil['campus'], ENT_QUOTES, 'UTF-8') ?>
+                </p>
+                <p class="perfil-local"><?= htmlspecialchars($perfil['cidade'], ENT_QUOTES, 'UTF-8') ?></p>
+            </div>
+            <nav class="menu-navegacao">
+                <a href="?pagina=inicio" class="link-nav <?= ($pagina === 'inicio') ? 'ativo' : '' ?>">Início</a>
+                <a href="?pagina=habilidades" class="link-nav <?= ($pagina === 'habilidades') ? 'ativo' : '' ?>">Habilidades</a>
+                <a href="?pagina=projetos" class="link-nav <?= ($pagina === 'projetos') ? 'ativo' : '' ?>">Projetos</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container conteudo-principal">
+        <?php if ($pagina === 'inicio'): ?>
+            <section class="card secao-apresentacao">
+                <h2>Sobre Mim</h2>
+                <p class="texto-apresentacao"><?= htmlspecialchars($perfil['apresentacao'], ENT_QUOTES, 'UTF-8') ?></p>
+                
+                <div class="resumo-academico">
+                    <div class="item-resumo">
+                        <strong>Curso:</strong>
+                        <span><?= htmlspecialchars($perfil['curso'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                    <div class="item-resumo">
+                        <strong>Instituição:</strong>
+                        <span><?= htmlspecialchars($perfil['campus'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                    <div class="item-resumo">
+                        <strong>Localização:</strong>
+                        <span><?= htmlspecialchars($perfil['cidade'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                </div>
+            </section>
+        <?php endif; ?>
+    </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($perfil['nome'], ENT_QUOTES, 'UTF-8') ?> &mdash; <?= htmlspecialchars($perfil['curso'], ENT_QUOTES, 'UTF-8') ?></p>
+            <p><small>Programação Web I &bull; <?= htmlspecialchars($perfil['campus'], ENT_QUOTES, 'UTF-8') ?></small></p>
+        </div>
+    </footer>
+</body>
+</html>
