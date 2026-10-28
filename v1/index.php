@@ -89,6 +89,40 @@ $pagina = $_GET['pagina'] ?? 'inicio';
                     </div>
                 </div>
             </section>
+        <?php elseif ($pagina === 'habilidades'): ?>
+            <section class="card secao-habilidades">
+                <h2>Minhas Habilidades</h2>
+                <p class="total-habilidades">
+                    Total de habilidades cadastradas: <strong><?= count($perfil['habilidades']) ?></strong>
+                </p>
+                <div class="lista-habilidades-texto">
+                    <p><strong>Visão geral:</strong> <?= htmlspecialchars(implode(', ', $perfil['habilidades']), ENT_QUOTES, 'UTF-8') ?></p>
+                </div>
+                <div class="grid-habilidades">
+                    <?php foreach ($perfil['habilidades'] as $habilidade): ?>
+                        <div class="badge-habilidade">
+                            <?= htmlspecialchars($habilidade, ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php elseif ($pagina === 'projetos'): ?>
+            <section class="secao-projetos">
+                <h2>Projetos Desenvolvidos</h2>
+                <p class="subtitulo-secao">Conheça alguns dos principais projetos técnicos desenvolvidos em minha trajetória acadêmica e profissional:</p>
+                <div class="grid-projetos">
+                    <?php foreach ($projetos as $id => $projeto): ?>
+                        <article class="card card-projeto">
+                            <h3><?= htmlspecialchars($projeto['titulo'], ENT_QUOTES, 'UTF-8') ?></h3>
+                            <p class="descricao-curta"><?= htmlspecialchars($projeto['descricao'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p class="tecnologias-projeto">
+                                <strong>Tecnologias:</strong> <?= htmlspecialchars($projeto['tecnologias'], ENT_QUOTES, 'UTF-8') ?>
+                            </p>
+                            <a href="?pagina=projeto&id=<?= (int)$id ?>" class="btn-detalhes">Ver detalhes &rarr;</a>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
         <?php endif; ?>
     </main>
 
