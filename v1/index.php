@@ -38,8 +38,18 @@ $projetos = [
     ],
 ];
 
-// 4. Qual página mostrar (R3)
+// 4. Qual página mostrar (R3 e R4)
 $pagina = $_GET['pagina'] ?? 'inicio';
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+// Validação de rotas e definição de status 404
+if ($pagina === 'projeto') {
+    if (!isset($projetos[$id])) {
+        http_response_code(404);
+    }
+} elseif (!in_array($pagina, ['inicio', 'habilidades', 'projetos'], true)) {
+    http_response_code(404);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -122,6 +132,35 @@ $pagina = $_GET['pagina'] ?? 'inicio';
                         </article>
                     <?php endforeach; ?>
                 </div>
+        <?php elseif ($pagina === 'projeto'): ?>
+            <?php if (isset($projetos[$id])): ?>
+                <article class="card secao-detalhe-projeto">
+                    <h2><?= htmlspecialchars($projetos[$id]['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+                    <div class="bloco-info-projeto">
+                        <h3>Descrição Detalhada</h3>
+                        <p class="descricao-completa"><?= htmlspecialchars($projetos[$id]['descricao'], ENT_QUOTES, 'UTF-8') ?></p>
+                        
+                        <h3>Tecnologias Utilizadas</h3>
+                        <p class="tecnologias-destaque">
+                            <?= htmlspecialchars($projetos[$id]['tecnologias'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                    </div>
+                    <div class="acoes-projeto">
+                        <a href="?pagina=projetos" class="btn-voltar">&larr; Voltar para Projetos</a>
+                    </div>
+                </article>
+            <?php else: ?>
+                <section class="card secao-erro">
+                    <h2>Projeto não encontrado</h2>
+                    <p>O projeto solicitado não foi localizado no catálogo.</p>
+                    <a href="?pagina=projetos" class="btn-voltar">&larr; Voltar para Lista de Projetos</a>
+                </section>
+            <?php endif; ?>
+        <?php else: ?>
+            <section class="card secao-erro">
+                <h2>Página não encontrada</h2>
+                <p>A rota solicitada não existe.</p>
+                <a href="?pagina=inicio" class="btn-voltar">&larr; Voltar para o Início</a>
             </section>
         <?php endif; ?>
     </main>
