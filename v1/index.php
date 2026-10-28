@@ -48,6 +48,16 @@ if (isset($_GET['tema'])) {
 }
 $temaOposto = ($tema === 'claro') ? 'escuro' : 'claro';
 
+// 3. Rota JSON (R7)
+if (isset($_GET['formato']) && $_GET['formato'] === 'json') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'perfil'   => $perfil,
+        'projetos' => $projetos
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 // 4. Qual página mostrar (R3 e R4)
 $pagina = $_GET['pagina'] ?? 'inicio';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
