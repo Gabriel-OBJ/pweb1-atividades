@@ -165,6 +165,7 @@ if ($pagina === 'projeto') {
                         </article>
                     <?php endforeach; ?>
                 </div>
+            </section>
         <?php elseif ($pagina === 'projeto'): ?>
             <?php if (isset($projetos[$id])): ?>
                 <article class="card secao-detalhe-projeto">
