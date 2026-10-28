@@ -1,2 +1,455 @@
-/* Projeto integrador v1: Perfil do Estudante
-   Crie aqui o estilo do seu perfil, com os dois temas (R9). */
+/* ==========================================================================
+   Projeto Integrador v1: Perfil do Estudante
+   Estilos com Suporte a Temas Claro e Escuro (R9)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Variáveis e Tokens de Design por Tema
+   -------------------------------------------------------------------------- */
+.tema-claro {
+    --fundo: #f5f7f6;
+    --texto: #1e2a24;
+    --texto-secundario: #4b5e54;
+    --card-fundo: #ffffff;
+    --destaque: #2563eb;
+    --destaque-hover: #1d4ed8;
+    --destaque-suave: rgba(37, 99, 235, 0.08);
+    --borda: #e2e8f0;
+    --borda-suave: #edf2f7;
+    --badge-fundo: #e0e7ff;
+    --badge-texto: #1e40af;
+    --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --sombra-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --cabecalho-fundo: rgba(255, 255, 255, 0.95);
+    --btn-tema-fundo: #e2e8f0;
+    --btn-tema-texto: #1e2a24;
+}
+
+.tema-escuro {
+    --fundo: #141a17;
+    --texto: #e6ece8;
+    --texto-secundario: #94a3b8;
+    --card-fundo: #1e2622;
+    --destaque: #38bdf8;
+    --destaque-hover: #0ea5e9;
+    --destaque-suave: rgba(56, 189, 248, 0.12);
+    --borda: #2d3748;
+    --borda-suave: #26332c;
+    --badge-fundo: #1e3a5f;
+    --badge-texto: #bae6fd;
+    --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    --sombra-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --cabecalho-fundo: rgba(30, 38, 34, 0.95);
+    --btn-tema-fundo: #2d3748;
+    --btn-tema-texto: #e6ece8;
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset e Tipografia Global
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--fundo);
+    color: var(--texto);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Cabeçalho e Navegação
+   -------------------------------------------------------------------------- */
+.cabecalho {
+    background-color: var(--cabecalho-fundo);
+    border-bottom: 1px solid var(--borda);
+    padding: 1.25rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.cabecalho-conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+
+.perfil-identificacao .perfil-nome {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--texto);
+    letter-spacing: -0.02em;
+}
+
+.perfil-subtitulo {
+    font-size: 0.92rem;
+    color: var(--texto-secundario);
+    margin-top: 0.15rem;
+}
+
+.perfil-local {
+    font-size: 0.82rem;
+    color: var(--destaque);
+    font-weight: 600;
+    margin-top: 0.1rem;
+}
+
+.menu-navegacao {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.link-nav {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.95rem;
+    color: var(--texto-secundario);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.link-nav:hover {
+    color: var(--destaque);
+    background-color: var(--destaque-suave);
+}
+
+.link-nav.ativo {
+    color: var(--destaque);
+    background-color: var(--destaque-suave);
+    font-weight: 600;
+    border-color: var(--destaque-suave);
+}
+
+.btn-tema {
+    background-color: var(--btn-tema-fundo);
+    color: var(--btn-tema-texto);
+    font-size: 0.88rem;
+    font-weight: 600;
+    border: 1px solid var(--borda);
+    cursor: pointer;
+}
+
+.btn-tema:hover {
+    background-color: var(--destaque-suave);
+    color: var(--destaque);
+    border-color: var(--destaque);
+}
+
+/* --------------------------------------------------------------------------
+   4. Conteúdo Principal e Cards
+   -------------------------------------------------------------------------- */
+.conteudo-principal {
+    flex: 1;
+    padding-top: 2.5rem;
+    padding-bottom: 3.5rem;
+}
+
+.card {
+    background-color: var(--card-fundo);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--sombra);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Seção de Apresentação (Início) */
+.secao-apresentacao h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: var(--texto);
+    border-bottom: 2px solid var(--destaque);
+    display: inline-block;
+    padding-bottom: 0.35rem;
+}
+
+.texto-apresentacao {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--texto);
+    margin-bottom: 1.75rem;
+}
+
+.resumo-academico {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    background-color: var(--destaque-suave);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.item-resumo strong {
+    display: block;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--destaque);
+    margin-bottom: 0.2rem;
+}
+
+.item-resumo span {
+    font-size: 0.98rem;
+    color: var(--texto);
+    font-weight: 500;
+}
+
+/* Seção de Habilidades */
+.secao-habilidades h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--texto);
+    border-bottom: 2px solid var(--destaque);
+    display: inline-block;
+    padding-bottom: 0.35rem;
+}
+
+.total-habilidades {
+    font-size: 1.05rem;
+    color: var(--texto-secundario);
+    margin-bottom: 1rem;
+}
+
+.total-habilidades strong {
+    color: var(--destaque);
+    font-size: 1.25rem;
+}
+
+.lista-habilidades-texto {
+    background-color: var(--destaque-suave);
+    border-left: 4px solid var(--destaque);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1.75rem;
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+.grid-habilidades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.badge-habilidade {
+    background-color: var(--badge-fundo);
+    color: var(--badge-texto);
+    padding: 0.55rem 1.15rem;
+    border-radius: 20px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease;
+}
+
+.badge-habilidade:hover {
+    transform: translateY(-2px);
+}
+
+/* Seção de Projetos (Listagem) */
+.secao-projetos h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: var(--texto);
+    border-bottom: 2px solid var(--destaque);
+    display: inline-block;
+    padding-bottom: 0.35rem;
+}
+
+.subtitulo-secao {
+    font-size: 1.02rem;
+    color: var(--texto-secundario);
+    margin-bottom: 2rem;
+}
+
+.grid-projetos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-projeto {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-projeto:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-hover);
+    border-color: var(--destaque);
+}
+
+.card-projeto h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--texto);
+}
+
+.card-projeto .descricao-curta {
+    font-size: 0.95rem;
+    color: var(--texto-secundario);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.card-projeto .tecnologias-projeto {
+    font-size: 0.88rem;
+    color: var(--texto);
+    margin-bottom: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--borda);
+}
+
+.card-projeto .tecnologias-projeto strong {
+    color: var(--destaque);
+}
+
+.btn-detalhes, .btn-voltar {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: var(--destaque);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-detalhes:hover, .btn-voltar:hover {
+    background-color: var(--destaque-hover);
+    transform: translateX(2px);
+}
+
+/* Detalhes do Projeto */
+.secao-detalhe-projeto h2 {
+    font-size: 1.8rem;
+    color: var(--texto);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--destaque);
+    display: inline-block;
+    padding-bottom: 0.35rem;
+}
+
+.bloco-info-projeto h3 {
+    font-size: 1.15rem;
+    color: var(--destaque);
+    margin: 1.25rem 0 0.5rem 0;
+}
+
+.bloco-info-projeto .descricao-completa {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--texto);
+    margin-bottom: 1.5rem;
+}
+
+.tecnologias-destaque {
+    display: inline-block;
+    background-color: var(--destaque-suave);
+    color: var(--destaque);
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.98rem;
+    border: 1px solid var(--borda);
+    margin-bottom: 2rem;
+}
+
+.acoes-projeto {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--borda);
+}
+
+/* Página de Erro (404) */
+.secao-erro {
+    text-align: center;
+    padding: 3.5rem 2rem;
+}
+
+.secao-erro h2 {
+    font-size: 2rem;
+    color: #ef4444;
+    margin-bottom: 0.75rem;
+}
+
+.secao-erro p {
+    font-size: 1.05rem;
+    color: var(--texto-secundario);
+    margin-bottom: 1.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Rodapé
+   -------------------------------------------------------------------------- */
+.rodape {
+    background-color: var(--cabecalho-fundo);
+    border-top: 1px solid var(--borda);
+    padding: 1.75rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--texto-secundario);
+    margin-top: auto;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.rodape p + p {
+    margin-top: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. Responsividade
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .cabecalho-conteudo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu-navegacao {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0.4rem;
+    }
+
+    .link-nav {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.88rem;
+    }
+
+    .grid-projetos {
+        grid-template-columns: 1fr;
+    }
+}
