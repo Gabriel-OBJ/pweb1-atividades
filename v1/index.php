@@ -38,6 +38,16 @@ $projetos = [
     ],
 ];
 
+// 2. Tema claro ou escuro (R5 e R6)
+$tema = $_GET['tema'] ?? $_COOKIE['tema'] ?? 'claro';
+if ($tema !== 'claro' && $tema !== 'escuro') {
+    $tema = 'claro';
+}
+if (isset($_GET['tema'])) {
+    setcookie('tema', $tema, time() + (30 * 24 * 60 * 60), '/');
+}
+$temaOposto = ($tema === 'claro') ? 'escuro' : 'claro';
+
 // 4. Qual página mostrar (R3 e R4)
 $pagina = $_GET['pagina'] ?? 'inicio';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -59,7 +69,7 @@ if ($pagina === 'projeto') {
     <title><?= htmlspecialchars($perfil['nome'], ENT_QUOTES, 'UTF-8') ?> | Perfil Profissional</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
-<body class="tema-claro">
+<body class="tema-<?= htmlspecialchars($tema, ENT_QUOTES, 'UTF-8') ?>">
     <header class="cabecalho">
         <div class="container cabecalho-conteudo">
             <div class="perfil-identificacao">
@@ -74,6 +84,19 @@ if ($pagina === 'projeto') {
                 <a href="?pagina=inicio" class="link-nav <?= ($pagina === 'inicio') ? 'ativo' : '' ?>">Início</a>
                 <a href="?pagina=habilidades" class="link-nav <?= ($pagina === 'habilidades') ? 'ativo' : '' ?>">Habilidades</a>
                 <a href="?pagina=projetos" class="link-nav <?= ($pagina === 'projetos') ? 'ativo' : '' ?>">Projetos</a>
+                <?php
+                $paramTema = ['tema' => $temaOposto];
+                if ($pagina !== 'inicio') {
+                    $paramTema['pagina'] = $pagina;
+                    if ($pagina === 'projeto' && $id > 0) {
+                        $paramTema['id'] = $id;
+                    }
+                }
+                $urlTema = '?' . http_build_query($paramTema);
+                ?>
+                <a href="<?= htmlspecialchars($urlTema, ENT_QUOTES, 'UTF-8') ?>" class="link-nav btn-tema">
+                    <?= ($tema === 'claro') ? '🌙 Modo Escuro' : '☀️ Modo Claro' ?>
+                </a>
             </nav>
         </div>
     </header>
