@@ -1,15 +1,22 @@
-# Perfil do Estudante: versão 1
+# Perfil do Estudante: Versão 2 (com Classes e POO)
 
-**Autor(a):** Gabriel Soares Vieira
+**Autor(a):** Gabriel Soares Vieira  
+**Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)  
+**Instituição:** IFCE Campus Boa Viagem  
+**Disciplina:** Programação Web I &bull; Prof. Dr. Renato William Rodrigues de Souza  
+
+---
 
 ## Como executar
 
 ```bash
-cd projeto/v1
+cd projeto/v2
 php -S localhost:8000 -d display_errors=1 -d output_buffering=0
 ```
 
-Abra http://localhost:8000
+Abra no navegador: [http://localhost:8000](http://localhost:8000)
+
+---
 
 ## Telas
 
@@ -17,67 +24,216 @@ Abra http://localhost:8000
 |---|---|
 | ![Tema claro](prints/claro.png) | ![Tema escuro](prints/escuro.png) |
 
-## 1. Mapa de rotas
+---
 
-Abaixo estão listadas todas as rotas suportadas pela aplicação, seu objetivo e o código de status HTTP retornado:
+## 1. As Classes
 
-| URL | O que mostra | Status |
+A arquitetura da Versão 2 migrou de estruturas puramente associativas para **Programação Orientada a Objetos (POO)** com tipagem estrita, encapsulamento rígido e tratamento de exceções.
+
+### 1.1 Classe `Projeto`
+
+Representa a entidade de um projeto individual desenvolvido no perfil acadêmico/profissional.
+
+#### Atributos
+
+| Atributo | Tipo | Visibilidade | Descrição |
+|---|---|---|---|
+| `$titulo` | `string` | `private` | Título identificador do projeto (validado contra vazio) |
+| `$descricao` | `string` | `private` | Descrição detalhada do escopo, arquitetura e funcionalidades |
+| `$tecnologias` | `string` | `private` | Relação textual de linguagens, frameworks e bibliotecas |
+
+#### Métodos
+
+| Método | Assinatura | Responsabilidade |
 |---|---|---|
-| `/` | Página inicial com dados do estudante e biografia pessoal | `200 OK` |
-| `/?pagina=inicio` | Apresentação pessoal (nome, curso, campus, cidade e biografia) | `200 OK` |
-| `/?pagina=habilidades` | Lista de habilidades técnicas com contagem (`count`) e visão geral (`implode`) | `200 OK` |
-| `/?pagina=projetos` | Catálogo com todos os projetos desenvolvidos e links para detalhes | `200 OK` |
-| `/?pagina=projeto&id=1` | Detalhes completos do Projeto 1 (GymTracker API) com tecnologias | `200 OK` |
-| `/?pagina=projeto&id=99` | Mensagem "Projeto não encontrado" para identificador inexistente | `404 Not Found` |
-| `/?pagina=qualquercoisa` | Mensagem "Página não encontrada" para rota desconhecida | `404 Not Found` |
-| `/?tema=escuro` | Aplica e grava cookie persistente para o tema escuro | `200 OK` |
-| `/?formato=json` | Retorno em JSON puro contendo dados de `$perfil` e `$projetos` | `200 OK` |
+| `__construct` | `public function __construct(string $titulo, string $descricao, string $tecnologias)` | Inicializa o objeto. Aplica a regra de validação via `trim($titulo) === ''` e lança `Exception('O projeto precisa de um título.')` caso inválido. |
+| `getTitulo` | `public function getTitulo(): string` | Retorna o título do projeto com garantia de tipagem. |
+| `getDescricao` | `public function getDescricao(): string` | Retorna o texto descritivo do projeto. |
+| `getTecnologias` | `public function getTecnologias(): string` | Retorna as tecnologias utilizadas. |
+| `paraArray` | `public function paraArray(): array` | Serializa os atributos privados em um array associativo padrão (`titulo`, `descricao`, `tecnologias`). |
 
-## 2. Saídas do terminal
+---
 
-**2.1 Uma página que existe:** `curl.exe -i "http://localhost:8000/?pagina=habilidades"` (cole só até o início do HTML)
+### 1.2 Classe `Perfil`
+
+Agrega as informações cadastrais do estudante e gerencia a coleção de projetos técnicos associados.
+
+#### Atributos
+
+| Atributo | Tipo | Visibilidade | Descrição |
+|---|---|---|---|
+| `$nome` | `string` | `private` | Nome completo do titular do perfil |
+| `$curso` | `string` | `private` | Denominação oficial do curso |
+| `$campus` | `string` | `private` | Campus da instituição de ensino |
+| `$cidade` | `string` | `private` | Localização geográfica (Cidade - UF) |
+| `$apresentacao` | `string` | `private` | Biografia detalhada e objetivos de carreira |
+| `$habilidades` | `array` | `private` | Lista de competências técnicas (mínimo de 5 exigidas) |
+| `$projetos` | `array` | `private` | Coleção de instâncias de `Projeto`, indexada a partir de 1 |
+
+#### Métodos
+
+| Método | Assinatura | Responsabilidade |
+|---|---|---|
+| `__construct` | `public function __construct(string $nome, string $curso, string $campus, string $cidade, string $apresentacao, array $habilidades)` | Inicializa os dados do estudante. Valida se `count($habilidades) < 5`, lançando `Exception('O perfil precisa de pelo menos 5 habilidades.')`. |
+| `adicionarProjeto` | `public function adicionarProjeto(Projeto $projeto): void` | Adiciona um objeto `Projeto` à coleção interna, indexando-o numericamente com chave iniciada em 1 (`count + 1`). |
+| `getProjeto` | `public function getProjeto(int $id): Projeto` | Recupera a instância de `Projeto` pelo identificador numérico. Se o `$id` inexistir, lança `Exception('Projeto não encontrado.')`. |
+| `getNome` | `public function getNome(): string` | Getter para o nome do estudante. |
+| `getCurso` | `public function getCurso(): string` | Getter para o curso. |
+| `getCampus` | `public function getCampus(): string` | Getter para o campus. |
+| `getCidade` | `public function getCidade(): string` | Getter para a cidade. |
+| `getApresentacao` | `public function getApresentacao(): string` | Getter para a biografia/apresentação. |
+| `getHabilidades` | `public function getHabilidades(): array` | Getter para a lista de habilidades. |
+| `getProjetos` | `public function getProjetos(): array` | Getter para a coleção de objetos `Projeto`. |
+| `paraArray` | `public function paraArray(): array` | Mapeia o perfil completo e invoca recursivamente `paraArray()` em cada projeto da coleção, gerando a estrutura associativa para a API JSON. |
+
+---
+
+## 2. Antes e Depois
+
+### 2.1 Tratamento do 404 de Projetos: `isset` vs `try/catch`
+
+#### Versão 1 (Array associativo com verificação procedural `isset`)
+```php
+// Roteamento na v1:
+if ($pagina === 'projeto') {
+    if (!isset($projetos[$id])) {
+        http_response_code(404);
+    }
+}
+
+// No HTML:
+<?php if (isset($projetos[$id])): ?>
+    <h2><?= htmlspecialchars($projetos[$id]['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+<?php else: ?>
+    <h2>Projeto não encontrado</h2>
+<?php endif; ?>
+```
+
+#### Versão 2 (POO com exceção de domínio e captura via `try/catch`)
+```php
+// Roteamento na v2:
+$projetoAtual = null;
+$erroProjeto = null;
+
+if ($pagina === 'projeto') {
+    try {
+        $projetoAtual = $perfil->getProjeto($id);
+    } catch (Exception $e) {
+        http_response_code(404);
+        $erroProjeto = $e->getMessage(); // "Projeto não encontrado."
+    }
+}
+
+// No HTML:
+<?php if ($projetoAtual !== null): ?>
+    <h2><?= htmlspecialchars($projetoAtual->getTitulo(), ENT_QUOTES, 'UTF-8') ?></h2>
+<?php else: ?>
+    <h2>Projeto não encontrado</h2>
+    <p><?= htmlspecialchars($erroProjeto ?? 'O projeto solicitado não foi localizado no catálogo.', ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+```
+
+---
+
+### 2.2 Renderização de Projetos no HTML: Acesso a Arrays vs Iteração de Coleção com Getters
+
+#### Versão 1 (Acesso a chaves literais de array solto)
+```php
+<?php foreach ($projetos as $id => $projeto): ?>
+    <article class="card card-projeto">
+        <h3><?= htmlspecialchars($projeto['titulo'], ENT_QUOTES, 'UTF-8') ?></h3>
+        <p class="descricao-curta"><?= htmlspecialchars($projeto['descricao'], ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="tecnologias-projeto">
+            <strong>Tecnologias:</strong> <?= htmlspecialchars($projeto['tecnologias'], ENT_QUOTES, 'UTF-8') ?>
+        </p>
+        <a href="?pagina=projeto&id=<?= (int)$id ?>" class="btn-detalhes">Ver detalhes &rarr;</a>
+    </article>
+<?php endforeach; ?>
+```
+
+#### Versão 2 (Iteração sobre coleção de objetos tipados e métodos getters)
+```php
+<?php foreach ($perfil->getProjetos() as $id => $projeto): ?>
+    <article class="card card-projeto">
+        <h3><?= htmlspecialchars($projeto->getTitulo(), ENT_QUOTES, 'UTF-8') ?></h3>
+        <p class="descricao-curta"><?= htmlspecialchars($projeto->getDescricao(), ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="tecnologias-projeto">
+            <strong>Tecnologias:</strong> <?= htmlspecialchars($projeto->getTecnologias(), ENT_QUOTES, 'UTF-8') ?>
+        </p>
+        <a href="?pagina=projeto&id=<?= (int)$id ?>" class="btn-detalhes">Ver detalhes &rarr;</a>
+    </article>
+<?php endforeach; ?>
+```
+
+---
+
+### 2.3 Explicação Técnica das Vantagens do Novo Modelo
+
+1. **Encapsulamento e Imutabilidade Controlada**: Na v1, os arrays associativos eram estruturas abertas que podiam ser modificadas arbitrariamente por qualquer trecho do código, além de estarem sujeitas a erros de digitação de chaves (como `$projeto['titlo']`), gerando avisos de `Undefined array key`. Na v2, todos os atributos são `private`, impedindo mutações não autorizadas e assegurando consistência em tempo de compilação/execução através de métodos getters tipados.
+2. **Delegação de Responsabilidades (Princípio Tell, Don't Ask)**: Na v1, o controlador precisava saber a estrutura interna de armazenamento para verificar `isset($projetos[$id])`. Na v2, o controlador simplesmente solicita o projeto ao modelo (`$perfil->getProjeto($id)`). A responsabilidade de saber se o projeto existe ou não pertence à classe `Perfil`, que lança uma exceção com mensagem contextual caso o recurso inexista.
+3. **Escalabilidade Dinâmica**: Ao gerenciar os projetos através de `$perfil->adicionarProjeto()`, novos projetos podem ser adicionados dinamicamente em tempo de execução sem demandar refatoração nos laços do HTML ou na lógica de verificação de IDs, tornando a aplicação extensível e manutenível.
+
+---
+
+## 3. As Classes se Recusam (Testes Negativos de Validação)
+
+Durante a fase de testes, o código foi submetido intencionalmente a entradas inválidas para validar se as classes barram a criação de objetos em estado inconsistente.
+
+### 3.1 Teste Negativo: Título de Projeto Vazio
+Tentativa de executar: `new Projeto('', 'Descrição...', 'Tecnologias...')`
+
+**Saída real disparada pelo PHP:**
+```text
+PHP Fatal error:  Uncaught Exception: O projeto precisa de um título. in C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php:16
+Stack trace:
+#0 C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php(160): Projeto->__construct('', 'API RESTful des...', 'Java 21, Spring...')
+#1 {main}
+  thrown in C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php on line 16
+```
+
+---
+
+### 3.2 Teste Negativo: Perfil com Menos de 5 Habilidades
+Tentativa de executar: `new Perfil(..., ['Java', 'Spring Boot', 'SQL & Modelagem de Dados', 'Git & GitHub'])`
+
+**Saída real disparada pelo PHP:**
+```text
+PHP Fatal error:  Uncaught Exception: O perfil precisa de pelo menos 5 habilidades. in C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php:67
+Stack trace:
+#0 C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php(144): Perfil->__construct('Gabriel Soares ...', 'Tecnologia em A...', 'IFCE Campus Boa...', 'Boa Viagem - CE', 'Concluí o ensi...', Array)
+#1 {main}
+  thrown in C:\Users\luffy\OneDrive\Documents\projeto\projeto\v2\index.php on line 67
+```
+
+---
+
+### 3.3 Explicação: Por que o objeto não é instanciado quando uma exceção é lançada no construtor?
+
+No ciclo de instanciação da linguagem PHP e no paradigma de Orientação a Objetos, o operador `new` realiza duas operações fundamentais:
+1. Aloca um bloco de memória para a nova instância da classe;
+2. Executa o método construtor `__construct` para inicializar o estado interno do objeto.
+
+A criação do objeto só é considerada finalizada e bem-sucedida se o construtor for executado até o fim sem interrupções. Quando uma exceção (`throw new Exception(...)`) é disparada no corpo do construtor:
+* A linha de execução do método é interrompida imediatamente;
+* O PHP desfaz a alocação e o Garbage Collector descarta a estrutura temporária do objeto incompleto;
+* A referência ao objeto **nunca é atribuída** à variável receptora (`$perfil` ou `$projeto`), preservando a variável inalterada ou indefinida;
+* Essa é uma garantia arquitetural de **Integridade de Invariantes**: o sistema impede categoricamente que exista em memória qualquer objeto cujo estado viole as regras de negócio basilares estabelecidas pela classe.
+
+---
+
+## 4. Saídas do Terminal
+
+Os comandos a seguir foram executados contra o servidor embutido (`php -S localhost:8000 -t projeto/v2`):
+
+### 4.1 Projeto Existente (Status 200 OK)
+Comando: `curl.exe -i "http://localhost:8000/?pagina=projeto&id=2"`
 
 ```text
 HTTP/1.1 200 OK
 Host: localhost:8000
-Date: Wed, 28 Oct 2026 23:30:52 GMT
+Date: Thu, 29 Oct 2026 00:39:24 GMT
 Connection: close
 X-Powered-By: PHP/8.4.24
-Content-type: text/html; charset=UTF-8
-
-<!DOCTYPE html>
-```
-
-**Explicação:**
-
-A requisição HTTP GET solicitou a rota `?pagina=habilidades`. O PHP capturou o parâmetro através de `$_GET['pagina']`, validou que se trata de uma rota válida presente na lista de páginas conhecidas e respondeu com o código de status HTTP `200 OK` e cabeçalho `Content-type: text/html; charset=UTF-8`, iniciando imediatamente após o envio do documento HTML correspondente.
-
-**2.2 Uma página que não existe:** `curl.exe -i "http://localhost:8000/?pagina=projeto&id=99"` (cole só até o início do HTML)
-
-```text
-HTTP/1.1 404 Not Found
-Host: localhost:8000
-Date: Wed, 28 Oct 2026 23:31:00 GMT
-Connection: close
-X-Powered-By: PHP/8.4.24
-Content-type: text/html; charset=UTF-8
-
-<!DOCTYPE html>
-```
-
-**Explicação:**
-
-A requisição tentou acessar um projeto com o parâmetro `id=99`. No bloco PHP no topo do arquivo, o ID foi convertido com segurança para número inteiro (`(int)$_GET['id']`) e a verificação `isset($projetos[$id])` retornou `false`, visto que o catálogo possui apenas os IDs 1, 2 e 3. Diante disso, a função `http_response_code(404)` foi chamada antes de qualquer saída de corpo, fazendo com que o servidor retornasse o cabeçalho `HTTP/1.1 404 Not Found` e renderizasse o aviso de "Projeto não encontrado" na interface.
-
-**2.3 A troca de tema:** `curl.exe -i "http://localhost:8000/?tema=escuro"` (cole só até a linha do `<body>`)
-
-```text
-HTTP/1.1 200 OK
-Host: localhost:8000
-Date: Wed, 28 Oct 2026 23:31:06 GMT
-Connection: close
-X-Powered-By: PHP/8.4.24
-Set-Cookie: tema=escuro; expires=Fri, 27 Nov 2026 23:31:06 GMT; Max-Age=2592000; path=/
 Content-type: text/html; charset=UTF-8
 
 <!DOCTYPE html>
@@ -88,41 +244,139 @@ Content-type: text/html; charset=UTF-8
     <title>Gabriel Soares Vieira | Perfil Profissional</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
-<body class="tema-escuro">
+<body class="tema-claro">
+    <header class="cabecalho">
+        <div class="container cabecalho-conteudo">
+            <div class="perfil-identificacao">
+                <h1 class="perfil-nome">Gabriel Soares Vieira</h1>
+                <p class="perfil-subtitulo">
+                    Tecnologia em Análise e Desenvolvimento de Sistemas &bull; 
+                    IFCE Campus Boa Viagem                </p>
+                <p class="perfil-local">Boa Viagem - CE</p>
+            </div>
+            <nav class="menu-navegacao">
+                <a href="?pagina=inicio" class="link-nav ">Início</a>
+                <a href="?pagina=habilidades" class="link-nav ">Habilidades</a>
+                <a href="?pagina=projetos" class="link-nav ">Projetos</a>
+                                <a href="?tema=escuro&amp;pagina=projeto&amp;id=2" class="link-nav btn-tema">
+                    🌙 Modo Escuro                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container conteudo-principal">
+                                    <article class="card secao-detalhe-projeto">
+                    <h2>Store Management Database Design</h2>
+                    <div class="bloco-info-projeto">
+                        <h3>Descrição Detalhada</h3>
+                        <p class="descricao-completa">Projeto de modelagem e arquitetura de banco de dados relacional para gestão operacional de loja comercial. Abrange controle de estoque, compras, entregas, fornecedores e histórico temporal de preços. Implementa integridade transacional ACID com Stored Procedures para compras atômicas e Triggers automáticas para auditoria de preços.</p>
+                        
+                        <h3>Tecnologias Utilizadas</h3>
+                        <p class="tecnologias-destaque">
+                            SQL, Modelagem Relacional, Triggers, Stored Procedures, ACID, MySQL                        </p>
+                    </div>
+                    <div class="acoes-projeto">
+                        <a href="?pagina=projetos" class="btn-voltar">&larr; Voltar para Projetos</a>
+                    </div>
+                </article>
+                        </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>&copy; 2026 Gabriel Soares Vieira &mdash; Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+            <p><small>Programação Web I &bull; IFCE Campus Boa Viagem</small></p>
+        </div>
+    </footer>
+</body>
+</html>
 ```
 
-**Explicação (qual cabeçalho grava o tema e como o PHP sabe o tema na próxima requisição):**
+---
 
-O cabeçalho responsável por instruir o navegador do cliente a armazenar o tema é o `Set-Cookie: tema=escuro; expires=Fri, 27 Nov 2026 23:31:06 GMT; Max-Age=2592000; path=/`, emitido pela função `setcookie()` no topo do script ao identificar que o parâmetro `tema` foi fornecido via `$_GET`.
+### 4.2 Projeto Inexistente (Tratamento 404 Not Found com Exceção)
+Comando: `curl.exe -i "http://localhost:8000/?pagina=projeto&id=99"`
 
-Na requisição seguinte realizada pelo usuário, o navegador anexa automaticamente o cabeçalho `Cookie: tema=escuro` no pacote da requisição HTTP. O interpretador PHP lê esse cabeçalho e popula a superglobal `$_COOKIE['tema']`. Graças à prioridade implementada (`$tema = $_GET['tema'] ?? $_COOKIE['tema'] ?? 'claro'`), mesmo que a URL subsequente não contenha o parâmetro `?tema=`, o PHP recuperará o valor persistido no cookie e aplicará a classe `<body class="tema-escuro">`.
+```text
+HTTP/1.1 404 Not Found
+Host: localhost:8000
+Date: Thu, 29 Oct 2026 00:39:29 GMT
+Connection: close
+X-Powered-By: PHP/8.4.24
+Content-type: text/html; charset=UTF-8
 
-**2.4 A API:** `curl.exe -i "http://localhost:8000/?formato=json"`
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel Soares Vieira | Perfil Profissional</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="tema-claro">
+    <header class="cabecalho">
+        <div class="container cabecalho-conteudo">
+            <div class="perfil-identificacao">
+                <h1 class="perfil-nome">Gabriel Soares Vieira</h1>
+                <p class="perfil-subtitulo">
+                    Tecnologia em Análise e Desenvolvimento de Sistemas &bull; 
+                    IFCE Campus Boa Viagem                </p>
+                <p class="perfil-local">Boa Viagem - CE</p>
+            </div>
+            <nav class="menu-navegacao">
+                <a href="?pagina=inicio" class="link-nav ">Início</a>
+                <a href="?pagina=habilidades" class="link-nav ">Habilidades</a>
+                <a href="?pagina=projetos" class="link-nav ">Projetos</a>
+                                <a href="?tema=escuro&amp;pagina=projeto&amp;id=99" class="link-nav btn-tema">
+                    🌙 Modo Escuro                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container conteudo-principal">
+                                    <section class="card secao-erro">
+                    <h2>Projeto não encontrado</h2>
+                    <p>Projeto não encontrado.</p>
+                    <a href="?pagina=projetos" class="btn-voltar">&larr; Voltar para Lista de Projetos</a>
+                </section>
+                        </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>&copy; 2026 Gabriel Soares Vieira &mdash; Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+            <p><small>Programação Web I &bull; IFCE Campus Boa Viagem</small></p>
+        </div>
+    </footer>
+</body>
+</html>
+```
+
+---
+
+### 4.3 API JSON com `paraArray()` (Status 200 OK)
+Comando: `curl.exe -i "http://localhost:8000/?formato=json"`
 
 ```text
 HTTP/1.1 200 OK
 Host: localhost:8000
-Date: Wed, 28 Oct 2026 23:31:15 GMT
+Date: Thu, 29 Oct 2026 00:39:37 GMT
 Connection: close
 X-Powered-By: PHP/8.4.24
 Content-Type: application/json; charset=utf-8
 
 {
-    "perfil": {
-        "nome": "Gabriel Soares Vieira",
-        "curso": "Tecnologia em Análise e Desenvolvimento de Sistemas",
-        "campus": "IFCE Campus Boa Viagem",
-        "cidade": "Boa Viagem - CE",
-        "apresentacao": "Concluí o ensino médio integrado ao curso técnico em Redes de Computadores no IFCE e, motivado pelo dinamismo da área de tecnologia, decidi dar continuidade à minha formação acadêmica no mesmo campus, ingressando no curso superior de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS). Meu principal objetivo profissional é consolidar minha carreira como Engenheiro de Software, atuando no desenvolvimento de sistemas robustos, escaláveis e de alto impacto, compreendendo todo o ciclo de vida e a arquitetura de produtos tecnológicos para além da simples escrita de código.",
-        "habilidades": [
-            "Java",
-            "Spring Boot",
-            "SQL & Modelagem de Dados",
-            "Git & GitHub",
-            "Testes Unitários",
-            "Fundamentos de Computação & Algoritmos"
-        ]
-    },
+    "nome": "Gabriel Soares Vieira",
+    "curso": "Tecnologia em Análise e Desenvolvimento de Sistemas",
+    "campus": "IFCE Campus Boa Viagem",
+    "cidade": "Boa Viagem - CE",
+    "apresentacao": "Concluí o ensino médio integrado ao curso técnico em Redes de Computadores no IFCE e, motivado pelo dinamismo da área de tecnologia, decidi dar continuidade à minha formação acadêmica no mesmo campus, ingressando no curso superior de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS). Meu principal objetivo profissional é consolidar minha carreira como Engenheiro de Software, atuando no desenvolvimento de sistemas robustos, escaláveis e de alto impacto, compreendendo todo o ciclo de vida e a arquitetura de produtos tecnológicos para além da simples escrita de código.",
+    "habilidades": [
+        "Java",
+        "Spring Boot",
+        "SQL & Modelagem de Dados",
+        "Git & GitHub",
+        "Testes Unitários",
+        "Fundamentos de Computação & Algoritmos"
+    ],
     "projetos": {
         "1": {
             "titulo": "GymTracker API",
@@ -143,70 +397,40 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-**Explicação:**
+---
 
-Ao identificar o parâmetro `?formato=json` na query string, o bloco 3 do processamento PHP é ativado antes de qualquer renderização de HTML. O script envia o cabeçalho `Content-Type: application/json; charset=utf-8` via `header()`, codifica os arrays associativos `$perfil` e `$projetos` com `json_encode()` usando as opções `JSON_PRETTY_PRINT` (formatação legível com indentação) e `JSON_UNESCAPED_UNICODE` (preservação de caracteres acentuados em português), e encerra a execução imediatamente com `exit;`. Esse encerramento garante que nenhum espaço em branco ou tag HTML seja enviado, entregando um JSON puro e em conformidade com padrões de APIs RESTful.
+## 5. Perguntas Conceituais Obrigatórias
 
-**2.5 Log do servidor** das quatro requisições acima
+### (a) Por que `json_encode($perfil)` devolve `{}`?
 
-```text
-[Wed Oct 28 20:30:52 2026] [::1]:56043 Accepted
-[Wed Oct 28 20:30:52 2026] [::1]:56043 [200]: GET /?pagina=habilidades
-[Wed Oct 28 20:30:52 2026] [::1]:56043 Closing
-[Wed Oct 28 20:31:00 2026] [::1]:56044 Accepted
-[Wed Oct 28 20:31:00 2026] [::1]:56044 [404]: GET /?pagina=projeto&id=99
-[Wed Oct 28 20:31:00 2026] [::1]:56044 Closing
-[Wed Oct 28 20:31:06 2026] [::1]:56045 Accepted
-[Wed Oct 28 20:31:06 2026] [::1]:56045 [200]: GET /?tema=escuro
-[Wed Oct 28 20:31:06 2026] [::1]:56045 Closing
-[Wed Oct 28 20:31:15 2026] [::1]:56046 Accepted
-[Wed Oct 28 20:31:15 2026] [::1]:56046 [200]: GET /?formato=json
-[Wed Oct 28 20:31:15 2026] [::1]:56046 Closing
-```
+**Resposta Técnica:**  
+O serializador nativo `json_encode()` do interpretador PHP inspeciona o objeto a partir de um escopo de chamada externo e serializa **única e exclusivamente as propriedades com visibilidade pública (`public`)**.
 
-**Explicação:**
+Como todos os atributos da classe `Perfil` (`$nome`, `$curso`, `$campus`, `$cidade`, `$apresentacao`, `$habilidades`, `$projetos`) foram declarados estritamente como `private` em respeito às boas práticas de encapsulamento, o reflexo do `json_encode()` não possui visibilidade de acesso sobre nenhum atributo direto da instância, resultando na representação de um objeto vazio (`{}`).
 
-O servidor de desenvolvimento embutido do PHP (`php -S`) registra detalhadamente o ciclo de vida de cada requisição HTTP:
-1. `Accepted`: Abertura e aceitação da conexão TCP entre o cliente (`::1`, localhost IPv6) e a porta efêmera atribuída;
-2. `[STATUS]: MÉTODO URI`: O código de status HTTP final retornado pelo script PHP (por exemplo, `[200]` para rotas bem-sucedidas e `[404]` quando a rota ou recurso não foi localizado), seguido do verbo HTTP e da rota acessada com seus parâmetros;
-3. `Closing`: Encerramento da conexão após o envio completo dos cabeçalhos e do corpo da resposta.
-Os logs confirmam que o roteamento e a alteração dinâmica de status para `404` foram recebidos e propagados corretamente pelo servidor web.
+Para resolver essa limitação sem abrir mão da segurança dos modificadores de acesso, implementa-se o método público `paraArray()`. Esse método opera no escopo interno da classe e extrai os valores privados, gerando uma estrutura de array associativo pura que pode ser convertida fielmente em JSON.
 
-## 3. Onde usei cada conceito
+---
 
-| Conceito | Linha(s) do `index.php` | Para que usei |
-|---|---|---|
-| Array associativo | Linhas 7 a 21 e 23 a 39 | Armazenamento estruturado dos dados cadastrais do perfil (`$perfil`) e do catálogo de projetos (`$projetos`) com chaves textuais e dados completos. |
-| `$_GET` e `??` | Linhas 42, 52, 62 e 63 | Leitura segura dos parâmetros passados pela query string na URL (`tema`, `formato`, `pagina` e `id`), utilizando coalescência nula para garantir valores padrão quando os parâmetros não forem fornecidos. |
-| `if` / `elseif` / `else` | Linhas 43, 46, 52, 66–72 (PHP) e 116–198 (HTML) | Validação de tema, desvio para emissão da API JSON, validação de rotas com código 404 e controle de renderização das páginas no corpo HTML via sintaxe alternativa (`endif;`). |
-| `htmlspecialchars` | Linhas 79, 82, 86, 88, 89, 91, 107, 118, 123, 127, 131, 142, 147, 159, 160, 162, 171, 174, 178, 204, 205 | Sanitização de todos os dados dinâmicos emitidos no HTML, convertendo caracteres especiais em entidades HTML para neutralizar vulnerabilidades de Cross-Site Scripting (XSS). |
-| `setcookie` e `$_COOKIE` | Linhas 42 e 47 | Leitura da preferência de tema gravada previamente no cliente (`$_COOKIE['tema']`) e persistência da escolha por 30 dias via cabeçalho HTTP (`setcookie`). |
-| `http_response_code(404)` | Linhas 68 e 71 | Definição explícita do código de status HTTP 404 Not Found para requisições com IDs de projeto inexistentes ou páginas desconhecidas. |
-| `header` e `json_encode` | Linhas 53 e 54 a 57 | Configuração do cabeçalho `Content-Type: application/json` e serialização dos arrays de dados em JSON estruturado com suporte nativo a acentuação UTF-8. |
-| `implode` e `count` | Linhas 139 e 142 | Cálculo do total numérico de habilidades cadastradas (`count($perfil['habilidades'])`) e concatenação de todos os elementos em uma lista textual separada por vírgulas (`implode(', ', ...)`). |
+### (b) Os objetos `$perfil` e `$projeto` continuam na memória do servidor depois que a página é enviada? Por quê?
 
-## 4. Decisões e dificuldades
+**Resposta Técnica:**  
+**Não. Os objetos são totalmente descartados da memória do servidor assim que a resposta HTTP é enviada.**
 
-**4.1 Por que toda a lógica PHP fica no topo do arquivo, antes do HTML?**
+O modelo de execução da arquitetura padrão do PHP é baseado no paradigma **Shared-Nothing (nada compartilhado)** por requisição HTTP. Toda execução de script obedece a um ciclo de vida efêmero e isolado:
+1. Ao receber a solicitação HTTP, o interpretador instancia o ambiente de execução e aloca os objetos na memória RAM (Heap);
+2. O script processa a lógica, manipula os objetos e despacha os cabeçalhos e corpo da resposta para o cliente;
+3. No exato instante em que o script encerra a execução (ao término do arquivo ou após um comando `exit`), o mecanismo de **Garbage Collection (GC)** do PHP desaloca todos os recursos e limpa a memória RAM;
+4. Na requisição HTTP seguinte, absolutamente nada do estado anterior permanece na memória do processo PHP. Caso seja necessária persistência entre requisições, ela deve ocorrer através de mecanismos externos de persistência de estado (como Cookies HTTP, Sessões PHP, bancos de dados relacionais ou caches distribuídos).
 
-No protocolo HTTP, as respostas do servidor são transmitidas em duas etapas obrigatórias e sequenciais: primeiro os **cabeçalhos HTTP** (que contêm o código de status como `200` ou `404`, cabeçalhos de tipo de conteúdo como `Content-Type` e instruções de cookies via `Set-Cookie`) e, em seguida, o **corpo da resposta** (o documento HTML).
+---
 
-Se houver qualquer caractere emitido antes de chamar funções como `setcookie()`, `header()` ou `http_response_code()` — incluindo uma tag HTML, um espaço em branco ou uma linha vazia antes da tag `<?php` —, o PHP é forçado a despachar os cabeçalhos HTTP imediatamente para dar início ao corpo. Quando a flag `-d output_buffering=0` está ativada (sem buffer de saída), qualquer tentativa posterior de modificar cabeçalhos ou gravar cookies resulta no erro fatal `Warning: Cannot modify header information - headers already sent`.
+### (c) Por que os atributos são `private`, e não `public`?
 
-Ao centralizar toda a lógica de tomada de decisão (leitura de parâmetros, validação de segurança, definição de status HTTP, gravação de cookies e encerramento para JSON) no topo do arquivo antes de qualquer tag HTML, garantimos que todas as manipulações de cabeçalhos ocorram de forma limpa, confiável e sem erros de envio prematuro.
+**Resposta Técnica:**  
+A utilização de atributos `private` é o alicerce fundamental do princípio de **Encapsulamento** da Programação Orientada a Objetos.
 
-**4.2 Por que o tema escolhido na URL precisa ser validado?**
-
-A entrada de dados via URL (`$_GET`) é uma fonte externa e não confiável que pode ser livremente manipulada por qualquer usuário ou atacante. Se o valor do parâmetro `?tema=` fosse diretamente inserido no HTML (por exemplo: `<body class="tema-<?= $_GET['tema'] ?>">`) ou gravado diretamente em um cookie sem filtragem, a aplicação ficaria suscetível a ataques de **Cross-Site Scripting Refletido (XSS)**. Um invasor poderia elaborar uma URL maliciosa como `?tema="><script>alert(document.cookie)</script>` para injetar scripts no navegador da vítima.
-
-Além da prevenção contra XSS (reforçada pelo uso de `htmlspecialchars`), a validação de regras de negócio garante a integridade visual da aplicação. Ao aplicar uma validação estrita baseada em lista branca (*whitelist*), aceitando unicamente os valores `'claro'` e `'escuro'`, qualquer valor inesperado ou malicioso é imediatamente normalizado para o tema padrão (`'claro'`), evitando anomalias de layout ou quebras no CSS.
-
-**4.3 Qual foi a maior dificuldade e como você resolveu?**
-
-O principal desafio técnico esteve relacionado ao ciclo de vida e tempo de propagação dos cookies HTTP em conjunto com a navegação do usuário. A função `setcookie()` instrui o navegador a salvar o cookie para as próximas requisições, mas ela não altera imediatamente o array global `$_COOKIE` na requisição em andamento. Ou seja, ao clicar em um link como `?tema=escuro`, a superglobal `$_COOKIE['tema']` ainda conteria o valor antigo (ou estaria vazia no primeiro acesso).
-
-Para solucionar essa assincronia e proporcionar uma experiência de troca instantânea de tema sem a necessidade de recarregar a página duas vezes, foi implementada uma ordem de precedência clara:
-```php
-$tema = $_GET['tema'] ?? $_COOKIE['tema'] ?? 'claro';
-```
-Dessa maneira, a intenção explícita na URL (`$_GET['tema']`) assume prioridade imediata sobre o cookie preexistente, permitindo que o CSS renderize a página no novo tema no mesmo ciclo de processamento, enquanto o comando `setcookie()` grava a preferência para todas as navegações subsequentes. Complementarmente, foram gerados links dinâmicos no botão do menu que preservam a página e o identificador do projeto atual durante a alternância entre modo claro e escuro.
+Os três pilares técnicos dessa decisão são:
+1. **Preservação de Invariantes e Validação Rigorosa**: Ao manter os atributos privados, nenhum código externo consegue alterar diretamente o estado de um objeto. Toda mutação de estado fica restrita ao construtor ou métodos específicos, garantindo que regras de negócio essenciais (como a exigência de no mínimo 5 habilidades ou a obrigatoriedade de título não vazio em um projeto) jamais sejam violadas em momento algum do ciclo de vida da aplicação;
+2. **Prevenção de Corrupção de Estado e Bugs Silenciosos**: Atributos públicos (`public`) permitiriam atribuições externas desordenadas em qualquer parte do script (por exemplo, `$perfil->habilidades = [];` ou `$projeto->titulo = ''`), gerando estados corrompidos, falhas de renderização e inconsistências difíceis de rastrear;
+3. **Ocultação da Estrutura de Armazenamento (Baixo Acoplamento)**: Atributos privados ocultam como os dados são organizados por baixo dos panos. Se no futuro a coleção interna de projetos migrar de um array para uma coleção orientada a objetos ou uma fonte externa, a interface pública da classe (seus métodos getters) permanece inalterada, evitando que alterações internas quebrem o código consumidor.
