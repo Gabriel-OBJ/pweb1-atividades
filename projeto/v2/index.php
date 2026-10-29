@@ -200,11 +200,16 @@ if (isset($_GET['formato']) && $_GET['formato'] === 'json') {
 // 5. Qual página mostrar
 $pagina = $_GET['pagina'] ?? 'inicio';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$projetoAtual = null;
+$erroProjeto = null;
 
-// Validação de rotas e definição de status 404
+// Validação de rotas e definição de status 404 com try/catch
 if ($pagina === 'projeto') {
-    if (!isset($projetos[$id])) {
+    try {
+        $projetoAtual = $perfil->getProjeto($id);
+    } catch (Exception $e) {
         http_response_code(404);
+        $erroProjeto = $e->getMessage();
     }
 } elseif (!in_array($pagina, ['inicio', 'habilidades', 'projetos'], true)) {
     http_response_code(404);
@@ -306,16 +311,16 @@ if ($pagina === 'projeto') {
                 </div>
             </section>
         <?php elseif ($pagina === 'projeto'): ?>
-            <?php if (isset($projetos[$id])): ?>
+            <?php if ($projetoAtual !== null): ?>
                 <article class="card secao-detalhe-projeto">
-                    <h2><?= htmlspecialchars($projetos[$id]->getTitulo(), ENT_QUOTES, 'UTF-8') ?></h2>
+                    <h2><?= htmlspecialchars($projetoAtual->getTitulo(), ENT_QUOTES, 'UTF-8') ?></h2>
                     <div class="bloco-info-projeto">
                         <h3>Descrição Detalhada</h3>
-                        <p class="descricao-completa"><?= htmlspecialchars($projetos[$id]->getDescricao(), ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="descricao-completa"><?= htmlspecialchars($projetoAtual->getDescricao(), ENT_QUOTES, 'UTF-8') ?></p>
                         
                         <h3>Tecnologias Utilizadas</h3>
                         <p class="tecnologias-destaque">
-                            <?= htmlspecialchars($projetos[$id]->getTecnologias(), ENT_QUOTES, 'UTF-8') ?>
+                            <?= htmlspecialchars($projetoAtual->getTecnologias(), ENT_QUOTES, 'UTF-8') ?>
                         </p>
                     </div>
                     <div class="acoes-projeto">
@@ -325,7 +330,7 @@ if ($pagina === 'projeto') {
             <?php else: ?>
                 <section class="card secao-erro">
                     <h2>Projeto não encontrado</h2>
-                    <p>O projeto solicitado não foi localizado no catálogo.</p>
+                    <p><?= htmlspecialchars($erroProjeto ?? 'O projeto solicitado não foi localizado no catálogo.', ENT_QUOTES, 'UTF-8') ?></p>
                     <a href="?pagina=projetos" class="btn-voltar">&larr; Voltar para Lista de Projetos</a>
                 </section>
             <?php endif; ?>
