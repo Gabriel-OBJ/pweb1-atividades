@@ -175,8 +175,6 @@ $perfil->adicionarProjeto(new Projeto(
     'PHP 8.3, Laravel 13, MySQL, Eloquent ORM, Blade, Bootstrap 5'
 ));
 
-$projetos = $perfil->getProjetos();
-
 // 3. Tema claro ou escuro
 $tema = $_GET['tema'] ?? $_COOKIE['tema'] ?? 'claro';
 if ($tema !== 'claro' && $tema !== 'escuro') {
@@ -190,10 +188,7 @@ $temaOposto = ($tema === 'claro') ? 'escuro' : 'claro';
 // 4. Rota JSON
 if (isset($_GET['formato']) && $_GET['formato'] === 'json') {
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'perfil'   => $perfil,
-        'projetos' => $projetos
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    echo json_encode($perfil->paraArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
